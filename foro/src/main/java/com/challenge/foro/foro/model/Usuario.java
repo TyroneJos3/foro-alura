@@ -4,65 +4,71 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import lombok.*;
 import java.util.Collection;
 import java.util.List;
+import java.time.LocalDate;
+import com.challenge.foro.foro.datos.DtosRegistroUser;
+import com.challenge.foro.foro.datos.DtosActualizarUser;
 
 @Entity
 @Table(name = "usuarios")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String login;
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String nombre;
 
     @Column(nullable = false)
     private String password;
 
-    private String role;
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro;
 
-    public Usuario() {
+    private Boolean activo = true;
+
+    @PrePersist
+    protected void onCreate() {
+        fechaRegistro = LocalDate.now();
     }
 
-    public Usuario(String login, String password, String role) {
-        this.login = login;
-        this.password = password;
-        this.role = role;
+    public Usuario(DtosRegistroUser datos) {
+        this.nombre = datos.nombre();
+        this.email = datos.email();
+        this.password = datos.password();
+        this.activo = true;
     }
 
-    public Long getId() {
-        return id;
+    public void actualizarDtos(DtosActualizarUser datos){
+        if (datos.nombre() != null){
+            this.nombre = datos.nombre();
+        }
+        if (datos.email() != null){
+            this.email = datos.email();
+        }
     }
 
-    public String getLogin() {
-        return login;
+    public void desactivar(){
+        this.activo = false;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role == null) return List.of();
-        return List.of(new SimpleGrantedAuthority(role));
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
-
+ 
     @Override
     public String getPassword() {
         return password;
@@ -70,7 +76,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return login;
+        return this.email;
     }
 
     @Override

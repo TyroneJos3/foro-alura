@@ -21,9 +21,9 @@ public class TokenService {
     public String generarToken(Usuario usuario) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
-            return JWT.create()
-                    .withIssuer("API Voll.med")
-                    .withSubject(usuario.getLogin())
+                return JWT.create()
+                    .withIssuer("foro-api")
+                    .withSubject(usuario.getEmail())
                     .withExpiresAt(fechaExpiracion())
                     .sign(algoritmo);
         } catch (JWTCreationException exception){
