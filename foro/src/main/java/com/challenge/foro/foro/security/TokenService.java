@@ -37,8 +37,8 @@ public class TokenService {
 
     public String subject(String tokenJWT){
         try {
-            var algoritmo = Algorithm.HMAC256(secret);
-            return JWT.require(algoritmo).withIssuer("API Voll.med")
+                var algoritmo = Algorithm.HMAC256(secret);
+                return JWT.require(algoritmo).withIssuer("foro-api")
                     .build().verify(tokenJWT).getSubject();
 
         } catch (JWTVerificationException excepcion){

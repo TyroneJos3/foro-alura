@@ -2,10 +2,10 @@ spring:
   application:
     name: foro
   datasource:
-    url: jdbc:mysql://localhost:3306/foro
-    username: root
-    password: 
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://localhost:5432/challenge
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
